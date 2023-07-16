@@ -5,7 +5,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.tnt.beenalone.presentation.HomeScreen
+import com.tnt.beenalone.presentation.main.MainScreen
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
 import com.tnt.beenalone.utils.NavDestinations
 
@@ -14,7 +14,7 @@ fun BeenAloneApp() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = NavDestinations.HOME_SCREEN) {
         composable(NavDestinations.HOME_SCREEN) {
-            HomeScreen()
+            MainScreen()
         }
     }
 }

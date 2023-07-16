@@ -1,4 +1,4 @@
-package com.tnt.beenalone.presentation
+package com.tnt.beenalone.presentation.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
