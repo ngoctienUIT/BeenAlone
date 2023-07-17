@@ -9,6 +9,12 @@ import com.tnt.beenalone.ui.theme.Platinum
 import com.tnt.beenalone.ui.theme.Silver
 import com.tnt.beenalone.ui.theme.Veteran
 
+object Constants {
+    const val BEEN_ALONE_TNT_DATASTORE ="been_alone_tnt_datastore"
+    private const val HOST_URL = "192.168.1.6:8080"
+    const val BASE_URL_V1 ="http://$HOST_URL/api/v1/"
+}
+
 val rankList =
     listOf(
         mapOf("name" to "Đồng 3", "image" to R.drawable.bronze_rank, "color" to Bronze),

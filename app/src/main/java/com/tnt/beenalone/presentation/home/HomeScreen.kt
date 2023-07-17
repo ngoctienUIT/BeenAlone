@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.tnt.beenalone.R
 import com.tnt.beenalone.core.extensions.toNumberStar
 import com.tnt.beenalone.core.extensions.toRankIndex
@@ -42,7 +43,7 @@ import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val date1 = LocalDate.of(2002, 2, 11)
     val days = ChronoUnit.DAYS.between(date1, LocalDate.now())
 
