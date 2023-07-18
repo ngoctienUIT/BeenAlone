@@ -14,5 +14,5 @@ interface UserApi {
     suspend fun update(@Body body: Map<String, String>): Response<UserResponse>
 
     @GET("user/rank")
-    suspend fun getRank(@Body body: Map<String, String>): Response<List<UserResponse>>
+    suspend fun getRank(): Response<List<UserResponse>>
 }

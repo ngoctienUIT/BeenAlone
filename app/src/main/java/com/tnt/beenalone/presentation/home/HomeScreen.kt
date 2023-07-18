@@ -47,27 +47,29 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val date1 = LocalDate.of(2002, 2, 11)
     val days = ChronoUnit.DAYS.between(date1, LocalDate.now())
 
-    Scaffold(topBar = {
-        CenterAlignedTopAppBar(
-            title = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        modifier = Modifier.size(50.dp),
-                        painter = painterResource(id = R.drawable.heart_icon),
-                        contentDescription = "heart"
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Been Alone",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight(600),
-                        color = Color(0xFF222B45),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            },
-        )
-    }) { paddingValue ->
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            modifier = Modifier.size(50.dp),
+                            painter = painterResource(id = R.drawable.heart_icon),
+                            contentDescription = "heart"
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Been Alone",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight(600),
+                            color = Color(0xFF222B45),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                },
+            )
+        }
+    ) { paddingValue ->
         Column(
             modifier = Modifier
                 .padding(top = paddingValue.calculateTopPadding())
