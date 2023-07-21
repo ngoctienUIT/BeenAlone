@@ -49,7 +49,7 @@ fun CustomLinearProgressIndicator(
 
     var boxSize by remember { mutableStateOf(Size.Zero) }
 
-    LaunchedEffect(Unit) { dateAloneRemember = dateAlone % 100 }
+    LaunchedEffect(dateAlone) { dateAloneRemember = dateAlone % 100 }
     val density = LocalDensity.current
     val divAlone = dateAlone.toInt().div(100)
 

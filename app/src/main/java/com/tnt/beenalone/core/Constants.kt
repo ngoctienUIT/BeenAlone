@@ -10,7 +10,7 @@ import com.tnt.beenalone.ui.theme.Silver
 import com.tnt.beenalone.ui.theme.Veteran
 
 object Constants {
-    const val BEEN_ALONE_TNT_DATASTORE ="been_alone_tnt_datastore"
+    const val BEEN_ALONE_DATASTORE ="been_alone_tnt_datastore"
     private const val HOST_URL = "been-alone-server.vercel.app"
     const val BASE_URL_V1 ="https://$HOST_URL/api/v1/"
 }

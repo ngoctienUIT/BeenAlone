@@ -22,6 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.tnt.beenalone.R
 import com.tnt.beenalone.presentation.calendar.CalendarScreen
 import com.tnt.beenalone.presentation.home.HomeScreen
@@ -33,7 +35,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavController) {
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
 
@@ -49,7 +51,7 @@ fun MainScreen() {
                     ) {
                         Icon(
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(30.dp)
                                 .clickable {
                                     scope.launch {
                                         pagerState.animateScrollToPage(page = 0)
@@ -61,7 +63,7 @@ fun MainScreen() {
                         )
                         Icon(
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(30.dp)
                                 .clickable {
                                     scope.launch {
                                         pagerState.animateScrollToPage(page = 1)
@@ -73,7 +75,7 @@ fun MainScreen() {
                         )
                         Icon(
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(30.dp)
                                 .clickable {
                                     scope.launch {
                                         pagerState.animateScrollToPage(page = 2)
@@ -85,7 +87,7 @@ fun MainScreen() {
                         )
                         Icon(
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(30.dp)
                                 .clickable {
                                     scope.launch {
                                         pagerState.animateScrollToPage(page = 3)
@@ -111,7 +113,7 @@ fun MainScreen() {
                 0 -> HomeScreen()
                 1 -> CalendarScreen()
                 2 -> RankScreen()
-                3 -> SettingScreen()
+                3 -> SettingScreen(navController)
             }
         }
     }
@@ -121,6 +123,6 @@ fun MainScreen() {
 @Composable
 fun MainScreenPreview() {
     BeenAloneTheme {
-        MainScreen()
+        MainScreen(rememberNavController())
     }
 }

@@ -23,6 +23,7 @@ import com.tnt.beenalone.ui.theme.BeenAloneTheme
 
 @Composable
 fun CustomCircularProgressbar(
+    title: String,
     size: Dp = 260.dp,
     foregroundIndicatorColor: Color = Color(0x99FE0000),
     shadowColor: Color = Color.LightGray,
@@ -30,14 +31,14 @@ fun CustomCircularProgressbar(
     dateAlone: Float = 60f,
     animationDuration: Int = 1000,
 ) {
-    var dateAloneRemember by remember { mutableStateOf(0f) }
+    var dateAloneRemember by remember { mutableFloatStateOf(0f) }
 
     val dateAloneAnimate = animateFloatAsState(
         targetValue = dateAloneRemember,
         animationSpec = tween(durationMillis = animationDuration)
     )
 
-    LaunchedEffect(Unit) { dateAloneRemember = dateAlone % 100 }
+    LaunchedEffect(dateAlone) { dateAloneRemember = dateAlone % 100 }
 
     Box(
         modifier = Modifier.size(size),
@@ -80,19 +81,18 @@ fun CustomCircularProgressbar(
         }
 
         // Display the data usage value
-        DisplayText(dateAlone = dateAlone.toInt(), animateNumber = dateAloneAnimate)
+        DisplayText(title, dateAlone.toInt(), dateAloneAnimate)
     }
 }
 
 @Composable
-private fun DisplayText(dateAlone: Int = 60, animateNumber: State<Float>) {
+private fun DisplayText(title: String, dateAlone: Int = 60, animateNumber: State<Float>) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Text that shows the number inside the circle
         Text(
-            text = "Been Alone",
+            text = title,
             fontSize = 16.sp
         )
         Spacer(modifier = Modifier.height(2.dp))
@@ -116,6 +116,6 @@ private fun DisplayText(dateAlone: Int = 60, animateNumber: State<Float>) {
 @Composable
 fun CircularProgressbarPreview() {
     BeenAloneTheme {
-        CustomCircularProgressbar()
+        CustomCircularProgressbar("Been Alone")
     }
 }

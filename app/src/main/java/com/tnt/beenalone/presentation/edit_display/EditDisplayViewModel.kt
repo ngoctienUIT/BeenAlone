@@ -1,10 +1,12 @@
-package com.tnt.beenalone.presentation.home
+package com.tnt.beenalone.presentation.edit_display
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tnt.beenalone.data.local.repository.BeenAloneRepository
 import com.tnt.beenalone.data.local.store.DataStoreManager
-import com.tnt.beenalone.presentation.edit_display.EditDisplayUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,15 +16,17 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class EditDisplayViewModel @Inject constructor(
     private val beenAloneRepository: BeenAloneRepository,
     private val dataStoreManager: DataStoreManager
 ) :
     ViewModel() {
-    private val _homeUIState = MutableStateFlow(HomeUIState())
-    val homeUIState: StateFlow<HomeUIState> = _homeUIState
+    private val _editDisplayUIState = MutableStateFlow(EditDisplayUIState())
+    val editDisplayUIState: StateFlow<EditDisplayUIState> = _editDisplayUIState
 
     private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+    var showToastSuccess by mutableStateOf(false)
 
     init {
         getSetting()
@@ -32,14 +36,14 @@ class HomeViewModel @Inject constructor(
     private fun getSetting() {
         viewModelScope.launch {
             dataStoreManager.getString("dateAlone").collect { dateAlone ->
-                _homeUIState.value =
-                    _homeUIState.value.copy(date = LocalDate.parse(dateAlone, formatter), init = false)
+                _editDisplayUIState.value =
+                    _editDisplayUIState.value.copy(date = LocalDate.parse(dateAlone, formatter))
             }
         }
         viewModelScope.launch {
             dataStoreManager.getString("title").collect { title ->
                 if (title != null) {
-                    _homeUIState.value = _homeUIState.value.copy(title = title)
+                    _editDisplayUIState.value = _editDisplayUIState.value.copy(title = title)
                 }
             }
         }
@@ -49,9 +53,22 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             beenAloneRepository.getUser().collect {
                 if (it.isNotEmpty()) {
-                    _homeUIState.value = _homeUIState.value.copy(user = it[0].toUser())
+                    _editDisplayUIState.value =
+                        _editDisplayUIState.value.copy(
+                            startDate = LocalDate.parse(it[0].birthday, formatter)
+                        )
                 }
             }
+        }
+    }
+
+    fun saveSetting(dateAlone: LocalDate, title: String) {
+        viewModelScope.launch {
+            dataStoreManager.setString("dateAlone", formatter.format(dateAlone))
+            showToastSuccess = true
+        }
+        viewModelScope.launch {
+            dataStoreManager.setString("title", title)
         }
     }
 }
