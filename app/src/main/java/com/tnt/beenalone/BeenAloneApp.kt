@@ -13,7 +13,8 @@ import com.tnt.beenalone.presentation.edit_display.EditDisplayScreen
 import com.tnt.beenalone.presentation.edit_profile.EditProfileScreen
 import com.tnt.beenalone.presentation.main.MainScreen
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
-import com.tnt.beenalone.utils.NavDestinations
+import com.tnt.beenalone.core.utils.NavDestinations
+import com.tnt.beenalone.presentation.add_diary.AddDiaryScreen
 
 @Composable
 fun BeenAloneApp() {
@@ -32,6 +33,9 @@ fun BeenAloneApp() {
                 }
                 composable(NavDestinations.EDIT_DISPLAY_SCREEN) {
                     EditDisplayScreen(navController)
+                }
+                composable(NavDestinations.ADD_DIARY_SCREEN) {
+                    AddDiaryScreen(navController)
                 }
             }
         }

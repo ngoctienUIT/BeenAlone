@@ -32,9 +32,10 @@ import java.time.LocalDate
 
 @Composable
 fun CustomCalendarTable(
+    date: LocalDate,
     localDate: LocalDate = LocalDate.now(),
+    itemContent: @Composable (() -> Unit)? = null,
     onChangeDate: ((date: LocalDate) -> Unit)? = null,
-    itemContent: @Composable (() -> Unit)? = null
 ) {
     var now by remember { mutableStateOf(localDate) }
     val firstDate = LocalDate.of(now.year, now.month, 1)

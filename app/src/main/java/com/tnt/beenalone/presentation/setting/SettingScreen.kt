@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tnt.beenalone.R
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
-import com.tnt.beenalone.utils.NavDestinations
+import com.tnt.beenalone.core.utils.NavDestinations
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.color.ColorPalette
 import com.vanpra.composematerialdialogs.color.colorChooser

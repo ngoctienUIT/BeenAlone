@@ -111,7 +111,7 @@ fun MainScreen(navController: NavController) {
         ) { index ->
             when (index) {
                 0 -> HomeScreen()
-                1 -> CalendarScreen()
+                1 -> CalendarScreen(navController)
                 2 -> RankScreen()
                 3 -> SettingScreen(navController)
             }

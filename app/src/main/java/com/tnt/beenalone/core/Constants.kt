@@ -48,3 +48,11 @@ val rankList =
     )
 
 val listDayOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+
+val listFeeling = listOf(
+    R.drawable.icon_tired,
+    R.drawable.icon_pleading_face,
+    R.drawable.icon_smiling_face_hearts,
+    R.drawable.icon_star_struck,
+    R.drawable.icon_smiling_face_heart_eyes
+)
