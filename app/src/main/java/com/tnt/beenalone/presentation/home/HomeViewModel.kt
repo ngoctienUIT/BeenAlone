@@ -1,10 +1,10 @@
 package com.tnt.beenalone.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tnt.beenalone.data.local.repository.BeenAloneRepository
 import com.tnt.beenalone.data.local.store.DataStoreManager
-import com.tnt.beenalone.presentation.edit_display.EditDisplayUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,30 +26,28 @@ class HomeViewModel @Inject constructor(
 
     init {
         getSetting()
-        getUser()
     }
 
     private fun getSetting() {
         viewModelScope.launch {
             dataStoreManager.getString("dateAlone").collect { dateAlone ->
                 _homeUIState.value =
-                    _homeUIState.value.copy(date = LocalDate.parse(dateAlone, formatter), init = false)
+                    _homeUIState.value.copy(date = LocalDate.parse(dateAlone, formatter))
             }
         }
         viewModelScope.launch {
             dataStoreManager.getString("title").collect { title ->
+                Log.d("title", title.toString())
                 if (title != null) {
                     _homeUIState.value = _homeUIState.value.copy(title = title)
                 }
             }
         }
-    }
-
-    private fun getUser() {
         viewModelScope.launch {
             beenAloneRepository.getUser().collect {
-                if (it.isNotEmpty()) {
-                    _homeUIState.value = _homeUIState.value.copy(user = it[0].toUser())
+                Log.d("user", it.toString())
+                if (it != null) {
+                    _homeUIState.value = _homeUIState.value.copy(user = it.toUser())
                 }
             }
         }

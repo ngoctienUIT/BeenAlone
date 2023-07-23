@@ -10,9 +10,9 @@ import com.tnt.beenalone.ui.theme.Silver
 import com.tnt.beenalone.ui.theme.Veteran
 
 object Constants {
-    const val BEEN_ALONE_DATASTORE ="been_alone_tnt_datastore"
+    const val BEEN_ALONE_DATASTORE = "been_alone_tnt_datastore"
     private const val HOST_URL = "been-alone-server.vercel.app"
-    const val BASE_URL_V1 ="https://$HOST_URL/api/v1/"
+    const val BASE_URL_V1 = "https://$HOST_URL/api/v1/"
 }
 
 val rankList =
@@ -46,3 +46,5 @@ val rankList =
         mapOf("name" to "Chiến tướng", "image" to R.drawable.legendary, "color" to Master),
         mapOf("name" to "Thách đấu", "image" to R.drawable.conquerer_rank, "color" to Master),
     )
+
+val listDayOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")

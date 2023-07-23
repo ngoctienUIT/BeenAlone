@@ -29,10 +29,10 @@ class EditProfileViewModel @Inject constructor(private val beenAloneRepository: 
     private fun getUser() {
         viewModelScope.launch {
             beenAloneRepository.getUser().collect {
-                if (it.isEmpty()) {
+                if (it == null) {
                     _editProfileUIState.value = EditProfileUIState()
                 } else {
-                    _editProfileUIState.value = EditProfileUIState(it[0].toUser())
+                    _editProfileUIState.value = EditProfileUIState(it.toUser())
                 }
             }
         }
@@ -41,10 +41,10 @@ class EditProfileViewModel @Inject constructor(private val beenAloneRepository: 
     fun saveProfile(user: User) {
         viewModelScope.launch {
             val myUser = beenAloneRepository.getUser().first()
-            if (myUser.isEmpty()) {
+            if (myUser == null) {
                 beenAloneRepository.upsertUser(user.toUserEntity())
             } else {
-                beenAloneRepository.upsertUser(user.toUserEntity(myUser[0].idMongo, myUser[0].id))
+                beenAloneRepository.upsertUser(user.toUserEntity(myUser.idMongo, myUser.id))
             }
             showToastSuccess = true
         }

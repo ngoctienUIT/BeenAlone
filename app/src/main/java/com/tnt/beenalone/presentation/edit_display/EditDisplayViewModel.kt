@@ -52,10 +52,10 @@ class EditDisplayViewModel @Inject constructor(
     private fun getUser() {
         viewModelScope.launch {
             beenAloneRepository.getUser().collect {
-                if (it.isNotEmpty()) {
+                if (it != null) {
                     _editDisplayUIState.value =
                         _editDisplayUIState.value.copy(
-                            startDate = LocalDate.parse(it[0].birthday, formatter)
+                            startDate = LocalDate.parse(it.birthday, formatter)
                         )
                 }
             }

@@ -73,8 +73,7 @@ fun RankScreen(viewModel: RankViewModel = hiltViewModel()) {
             )
         },
         bottomBar = {
-            val date1 = LocalDate.of(2002, 2, 11)
-            val days = ChronoUnit.DAYS.between(date1, LocalDate.now())
+            val days = ChronoUnit.DAYS.between(rankUIState.date, LocalDate.now())
             BottomAppBar(
                 modifier = Modifier.shadow(elevation = 3.dp),
                 containerColor = Color.White,
@@ -120,7 +119,7 @@ fun RankScreen(viewModel: RankViewModel = hiltViewModel()) {
                             verticalArrangement = Arrangement.SpaceEvenly
                         ) {
                             Text(
-                                text = "Trần Ngọc Tiến",
+                                text = if (rankUIState.user != null) rankUIState.user!!.name else "",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold
                             )

@@ -1,6 +1,5 @@
 package com.tnt.beenalone.presentation.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -52,17 +50,15 @@ import java.time.temporal.ChronoUnit
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
-    var title by remember { mutableStateOf("Been Alone") }
-    var name by remember { mutableStateOf("") }
     var days = 0L
+    var title by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
     val homeUIState by viewModel.homeUIState.collectAsState()
 
     LaunchedEffect(homeUIState) {
         days = ChronoUnit.DAYS.between(homeUIState.date, LocalDate.now())
-        title = homeUIState.title
-        if (homeUIState.user != null) {
-            name = homeUIState.user!!.name
-        }
+        title = homeUIState.title ?: ""
+        name = if (homeUIState.user != null) homeUIState.user!!.name else ""
     }
 
     Scaffold(
@@ -88,102 +84,98 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             )
         }
     ) { paddingValue ->
-        if (homeUIState.init) {
-            CircularProgressIndicator()
-        } else {
-            Column(
+        Column(
+            modifier = Modifier
+                .padding(top = paddingValue.calculateTopPadding())
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CustomCircularProgressbar(title, dateAlone = days.toFloat())
+            Spacer(modifier = Modifier.height(50.dp))
+            Card(
                 modifier = Modifier
-                    .padding(top = paddingValue.calculateTopPadding())
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .height(230.dp),
+                elevation = CardDefaults.cardElevation(2.dp),
+                shape = RoundedCornerShape(15.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
-                CustomCircularProgressbar(title, dateAlone = days.toFloat())
-                Spacer(modifier = Modifier.height(50.dp))
-                Card(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .height(230.dp),
-                    elevation = CardDefaults.cardElevation(2.dp),
-                    shape = RoundedCornerShape(15.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Row {
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Image(
-                                    modifier = Modifier.size(40.dp),
-                                    painter = painterResource(id = R.drawable.crown_icon),
-                                    contentDescription = "rank"
-                                )
-                                Image(
-                                    modifier = Modifier
-                                        .size(90.dp)
-                                        .clip(RoundedCornerShape(90.dp))
-                                        .border(
-                                            width = 5.dp,
-                                            shape = RoundedCornerShape(90),
-                                            color = rankList[days.toRankIndex()]["color"] as Color
-                                        ),
-                                    painter = painterResource(id = R.drawable.avatar),
-                                    contentDescription = "avatar"
-                                )
-                            }
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = name,
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Spacer(modifier = Modifier.height(5.dp))
-                                Text(
-                                    text = "Hạng cô đơn",
-                                    fontSize = 14.sp
-                                )
-                                Spacer(modifier = Modifier.height(5.dp))
-                                Image(
-                                    modifier = Modifier.size(60.dp),
-                                    painter = painterResource(
-                                        id = rankList[days.toRankIndex()]["image"] as Int
+                    Row {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Image(
+                                modifier = Modifier.size(40.dp),
+                                painter = painterResource(id = R.drawable.crown_icon),
+                                contentDescription = "rank"
+                            )
+                            Image(
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .clip(RoundedCornerShape(90.dp))
+                                    .border(
+                                        width = 5.dp,
+                                        shape = RoundedCornerShape(90),
+                                        color = rankList[days.toRankIndex()]["color"] as Color
                                     ),
-                                    contentDescription = "rank"
+                                painter = painterResource(id = R.drawable.avatar),
+                                contentDescription = "avatar"
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = name,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Text(
+                                text = "Hạng cô đơn",
+                                fontSize = 14.sp
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Image(
+                                modifier = Modifier.size(60.dp),
+                                painter = painterResource(
+                                    id = rankList[days.toRankIndex()]["image"] as Int
+                                ),
+                                contentDescription = "rank"
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "${rankList[days.toRankIndex()]["name"]}",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = rankList[days.toRankIndex()]["color"] as Color
                                 )
-                                Spacer(modifier = Modifier.height(5.dp))
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (days.toNumberStar() > 0)
                                     Text(
-                                        text = "${rankList[days.toRankIndex()]["name"]}",
+                                        modifier = Modifier.padding(start = 3.dp),
+                                        text = days.toNumberStar().toString(),
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = rankList[days.toRankIndex()]["color"] as Color
                                     )
-                                    if (days.toNumberStar() > 0)
-                                        Text(
-                                            modifier = Modifier.padding(start = 3.dp),
-                                            text = days.toNumberStar().toString(),
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = rankList[days.toRankIndex()]["color"] as Color
-                                        )
-                                    if (days.toNumberStar() > 0)
-                                        Image(
-                                            painter = painterResource(id = R.drawable.star_icon),
-                                            contentDescription = "star"
-                                        )
-                                }
+                                if (days.toNumberStar() > 0)
+                                    Image(
+                                        painter = painterResource(id = R.drawable.star_icon),
+                                        contentDescription = "star"
+                                    )
                             }
                         }
-                        Spacer(modifier = Modifier.height(15.dp))
-                        CustomLinearProgressIndicator(dateAlone = days.toFloat())
                     }
+                    Spacer(modifier = Modifier.height(15.dp))
+                    CustomLinearProgressIndicator(dateAlone = days.toFloat())
                 }
             }
         }
