@@ -1,5 +1,9 @@
 package com.tnt.beenalone.presentation.calendar
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tnt.beenalone.data.local.repository.BeenAloneRepository
@@ -18,6 +22,9 @@ class CalendarViewModel @Inject constructor(private val beenAloneRepository: Bee
 
     private val _diaryMonthUIState = MutableStateFlow(DiaryMonthUIState())
     val diaryMonthUIState: StateFlow<DiaryMonthUIState> = _diaryMonthUIState
+
+    var date by mutableStateOf(LocalDate.now())
+    var month by mutableStateOf(LocalDate.now())
 
     fun getDiaryByDate(date: LocalDate) {
         viewModelScope.launch {
