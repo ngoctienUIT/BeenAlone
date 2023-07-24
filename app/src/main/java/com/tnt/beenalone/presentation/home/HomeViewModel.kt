@@ -26,13 +26,18 @@ class HomeViewModel @Inject constructor(
 
     init {
         getSetting()
+//        viewModelScope.launch {
+//            dataStoreManager.setString("dateAlone", "11/02/2002")
+//        }
     }
 
     private fun getSetting() {
         viewModelScope.launch {
             dataStoreManager.getString("dateAlone").collect { dateAlone ->
                 _homeUIState.value =
-                    _homeUIState.value.copy(date = LocalDate.parse(dateAlone, formatter))
+                    _homeUIState.value.copy(
+                        date = LocalDate.parse(dateAlone ?: "11/02/2002", formatter)
+                    )
             }
         }
         viewModelScope.launch {

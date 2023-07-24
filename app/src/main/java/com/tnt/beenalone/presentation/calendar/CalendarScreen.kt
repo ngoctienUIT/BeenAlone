@@ -46,7 +46,7 @@ fun CalendarScreen(navController: NavController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(NavDestinations.ADD_DIARY_SCREEN) {
+                    navController.navigate("${NavDestinations.ADD_DIARY_SCREEN}/${date.dayOfMonth}/${date.monthValue}/${date.year}") {
                         navController.graph.startDestinationRoute?.let { route ->
                             popUpTo(route) { saveState = true }
                         }

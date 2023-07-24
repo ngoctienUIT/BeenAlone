@@ -5,15 +5,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,10 +37,15 @@ import androidx.navigation.compose.rememberNavController
 import com.tnt.beenalone.R
 import com.tnt.beenalone.core.listFeeling
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddDiaryScreen(navController: NavController, viewModel: AddDiaryViewModel = hiltViewModel()) {
+fun AddDiaryScreen(
+    navController: NavController,
+    date: LocalDate,
+    viewModel: AddDiaryViewModel = hiltViewModel()
+) {
     val addDiaryUIState by viewModel.addDiaryUIState.collectAsState()
 
     Scaffold(
@@ -67,6 +76,7 @@ fun AddDiaryScreen(navController: NavController, viewModel: AddDiaryViewModel = 
             Text(text = "Xin chào, ${addDiaryUIState.user?.name}!")
             Text(text = "Hôm nay bạn cảm thấy như thể nào?")
             Text(text = "Chủ nhật, ngày 12 tháng 3 năm 2023")
+            Spacer(modifier = Modifier.height(10.dp))
             Card(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -90,6 +100,21 @@ fun AddDiaryScreen(navController: NavController, viewModel: AddDiaryViewModel = 
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                OutlinedButton(onClick = { /*TODO*/ }) {
+                    Text(text = "Chi tiết")
+                }
+                Button(onClick = {
+                    if (viewModel.selectedFeeling != -1) viewModel.saveDiary(date, null)
+                }) {
+                    Text(text = "Lưu")
+                }
+
+            }
         }
     }
 }
@@ -98,6 +123,6 @@ fun AddDiaryScreen(navController: NavController, viewModel: AddDiaryViewModel = 
 @Composable
 fun AddDiaryScreenPreview() {
     BeenAloneTheme {
-        AddDiaryScreen(rememberNavController())
+        AddDiaryScreen(rememberNavController(), LocalDate.now())
     }
 }

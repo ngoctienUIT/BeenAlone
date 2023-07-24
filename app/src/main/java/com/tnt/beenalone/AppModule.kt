@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.tnt.beenalone.core.Constants
+import com.tnt.beenalone.data.local.dao.DiaryDao
 import com.tnt.beenalone.data.local.dao.UserDao
 import com.tnt.beenalone.data.local.database.BeenAloneDatabase
 import com.tnt.beenalone.data.local.repository.BeenAloneRepository
@@ -37,6 +38,9 @@ class AppModule {
     fun provideUserDao(beenAloneDatabase: BeenAloneDatabase) = beenAloneDatabase.userDao()
 
     @Provides
-    fun provideInventoryRepository(userDao: UserDao): BeenAloneRepository =
-        BeenAloneRepositoryImpl(userDao)
+    fun provideDiaryDao(beenAloneDatabase: BeenAloneDatabase) = beenAloneDatabase.diaryDao()
+
+    @Provides
+    fun provideInventoryRepository(userDao: UserDao, diaryDao: DiaryDao): BeenAloneRepository =
+        BeenAloneRepositoryImpl(userDao, diaryDao)
 }

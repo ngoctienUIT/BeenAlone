@@ -6,11 +6,15 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tnt.beenalone.data.local.entity.DiaryEntity
 import com.tnt.beenalone.data.local.repository.BeenAloneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,5 +39,26 @@ class AddDiaryViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun saveDiary(date: LocalDate, content: String? = null) {
+        viewModelScope.launch {
+            val formatter = DateTimeFormatter.ofPattern("mm:HH")
+            val time = LocalTime.now()
+            beenAloneRepository.upsertDiary(
+                DiaryEntity(
+                    selectedFeeling,
+                    content,
+                    date.dayOfMonth,
+                    date.monthValue,
+                    date.year,
+                    formatter.format(time)
+                )
+            )
+        }
+    }
+
+    fun updateDiary(id: Long, content: String?) {
+
     }
 }
