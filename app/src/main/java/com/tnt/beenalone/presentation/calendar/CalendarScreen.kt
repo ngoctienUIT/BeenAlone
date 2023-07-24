@@ -1,7 +1,11 @@
 package com.tnt.beenalone.presentation.calendar
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,32 +15,39 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tnt.beenalone.core.listFeeling
 import com.tnt.beenalone.core.utils.NavDestinations
 import com.tnt.beenalone.ui.components.CustomCalendarTable
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarScreen(navController: NavController) {
+fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = hiltViewModel()) {
     var date by remember { mutableStateOf(LocalDate.now()) }
-    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val formatter = DateTimeFormatter.ofPattern("EEEE, dd 'thg' MM yyyy", Locale("vi", "VN"))
+    val diaryDateUIState by viewModel.diaryDateUIState.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Nhật ký")
+                    Text(text = "Nhật ký", fontWeight = FontWeight(600))
                 },
                 actions = {
 
@@ -62,6 +73,18 @@ fun CalendarScreen(navController: NavController) {
         Column(modifier = Modifier.padding(top = it.calculateTopPadding() + 16.dp)) {
             CustomCalendarTable(date) { d -> date = d }
             Text(text = formatter.format(date))
+            LazyColumn {
+                items(diaryDateUIState.listDiary.size) { index ->
+                    Row() {
+                        Text(text = diaryDateUIState.listDiary[index].content ?: "")
+                        Image(
+                            modifier = Modifier.size(50.dp),
+                            painter = painterResource(id = listFeeling[diaryDateUIState.listDiary[index].feel]),
+                            contentDescription = ""
+                        )
+                    }
+                }
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.tnt.beenalone.presentation.add_diary
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,6 +27,12 @@ class AddDiaryViewModel @Inject constructor(
 
     var selectedFeeling by mutableIntStateOf(-1)
 
+    var content by mutableStateOf<String?>(null)
+
+    var isVisibility by mutableStateOf(false)
+
+    var isSuccess by mutableStateOf(false)
+
     init {
         getUser()
     }
@@ -41,9 +48,9 @@ class AddDiaryViewModel @Inject constructor(
         }
     }
 
-    fun saveDiary(date: LocalDate, content: String? = null) {
+    fun saveDiary(date: LocalDate) {
         viewModelScope.launch {
-            val formatter = DateTimeFormatter.ofPattern("mm:HH")
+            val formatter = DateTimeFormatter.ofPattern("HH:mm")
             val time = LocalTime.now()
             beenAloneRepository.upsertDiary(
                 DiaryEntity(
@@ -55,10 +62,11 @@ class AddDiaryViewModel @Inject constructor(
                     formatter.format(time)
                 )
             )
+            isSuccess = true
         }
     }
 
-    fun updateDiary(id: Long, content: String?) {
+    fun updateDiary(id: Long) {
 
     }
 }

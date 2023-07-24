@@ -1,5 +1,12 @@
 package com.tnt.beenalone.presentation.add_diary
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +25,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +47,8 @@ import com.tnt.beenalone.R
 import com.tnt.beenalone.core.listFeeling
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,12 +58,19 @@ fun AddDiaryScreen(
     viewModel: AddDiaryViewModel = hiltViewModel()
 ) {
     val addDiaryUIState by viewModel.addDiaryUIState.collectAsState()
+    val density = LocalDensity.current
+    val formatter = DateTimeFormatter.ofPattern("EEEE, dd 'thg' MM yyyy", Locale("vi", "VN"))
+
+    if (viewModel.isSuccess) {
+        viewModel.isSuccess = false
+        navController.popBackStack()
+    }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = "Thêm nhật ký", fontWeight = FontWeight.Bold) },
-                actions = {
+                title = { Text(text = "Thêm nhật ký", fontWeight = FontWeight(600)) },
+                navigationIcon = {
                     Icon(
                         modifier = Modifier
                             .padding(end = 10.dp)
@@ -75,7 +93,7 @@ fun AddDiaryScreen(
         ) {
             Text(text = "Xin chào, ${addDiaryUIState.user?.name}!")
             Text(text = "Hôm nay bạn cảm thấy như thể nào?")
-            Text(text = "Chủ nhật, ngày 12 tháng 3 năm 2023")
+            Text(text = formatter.format(date))
             Spacer(modifier = Modifier.height(10.dp))
             Card(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -105,15 +123,32 @@ fun AddDiaryScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                OutlinedButton(onClick = { /*TODO*/ }) {
+                OutlinedButton(onClick = { viewModel.isVisibility = !viewModel.isVisibility }) {
                     Text(text = "Chi tiết")
                 }
-                Button(onClick = {
-                    if (viewModel.selectedFeeling != -1) viewModel.saveDiary(date, null)
-                }) {
+                Button(
+                    onClick = { viewModel.saveDiary(date) },
+                    enabled = viewModel.selectedFeeling != -1
+                ) {
                     Text(text = "Lưu")
                 }
-
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            AnimatedVisibility(
+                visible = viewModel.isVisibility,
+                enter = slideInVertically { with(density) { -40.dp.roundToPx() } } + expandVertically(
+                    expandFrom = Alignment.Top
+                ) + fadeIn(initialAlpha = 0.3f),
+                exit = slideOutVertically() + shrinkVertically() + fadeOut()
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    value = viewModel.content ?: "",
+                    onValueChange = { text -> viewModel.content = text }
+                )
             }
         }
     }
