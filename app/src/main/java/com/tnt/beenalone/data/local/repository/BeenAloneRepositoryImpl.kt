@@ -11,7 +11,10 @@ class BeenAloneRepositoryImpl(private val userDao: UserDao, private val diaryDao
     override fun getUser(): Flow<UserEntity?> = userDao.getUser()
 
     override suspend fun upsertUser(item: UserEntity) = userDao.upsertUser(item)
+
     override fun getDiary(id: Long): Flow<DiaryEntity?> = diaryDao.getDiary(id)
+
+    override fun getAllDiary(): Flow<List<DiaryEntity>> = diaryDao.getAllDiary()
 
     override fun getListDiaryByDate(day: Int, month: Int, year: Int): Flow<List<DiaryEntity>> =
         diaryDao.getListDiaryByDate(day, month, year)

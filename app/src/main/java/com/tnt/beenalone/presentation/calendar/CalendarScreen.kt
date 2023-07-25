@@ -7,7 +7,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,8 +46,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tnt.beenalone.R
 import com.tnt.beenalone.core.listFeeling
 import com.tnt.beenalone.core.utils.NavDestinations
+import com.tnt.beenalone.data.local.entity.DiaryEntity
 import com.tnt.beenalone.ui.components.CustomCalendarTable
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
 import java.time.format.DateTimeFormatter
@@ -73,7 +78,22 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
                     Text(text = "Nhật ký", fontWeight = FontWeight(600))
                 },
                 actions = {
-
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(35.dp)
+                            .clickable {
+                                navController.navigate(NavDestinations.DIARY_SCREEN) {
+                                    navController.graph.startDestinationRoute?.let { route ->
+                                        popUpTo(route) { saveState = true }
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                        painter = painterResource(id = R.drawable.diary_icon),
+                        contentDescription = ""
+                    )
                 }
             )
         },
@@ -123,41 +143,63 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
                     }
                 }
                 items(diaryDateUIState.listDiary.size) { index ->
-                    Card(
-                        modifier = Modifier.padding(16.dp, 10.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        elevation = CardDefaults.cardElevation(2.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(vertical = 10.dp)
-                                    .fillMaxHeight(),
-                            ) {
-                                Text(text = diaryDateUIState.listDiary[index].content ?: "__")
-                                Spacer(modifier = Modifier.weight(1f))
-                                Text(
-                                    text = "${diaryDateUIState.listDiary[index].time} ${diaryDateUIState.listDiary[index].day}/${diaryDateUIState.listDiary[index].month}/${diaryDateUIState.listDiary[index].year}",
-                                    fontWeight = FontWeight(600),
-                                    fontSize = 13.sp
-                                )
+                    ItemDiary(diaryDateUIState.listDiary[index]) {
+                        navController.navigate("${NavDestinations.ADD_DIARY_SCREEN}/${diaryDateUIState.listDiary[index].id}") {
+                            navController.graph.startDestinationRoute?.let { route ->
+                                popUpTo(route) { saveState = true }
                             }
-                            Spacer(modifier = Modifier.weight(1f))
-                            Image(
-                                modifier = Modifier.size(50.dp),
-                                painter = painterResource(id = listFeeling[diaryDateUIState.listDiary[index].feel]),
-                                contentDescription = ""
-                            )
+                            launchSingleTop = true
+                            restoreState = true
                         }
                     }
-
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ItemDiary(
+    diary: DiaryEntity,
+    onLongClick: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null
+) {
+    Card(
+        modifier = Modifier
+            .padding(16.dp, 10.dp)
+            .combinedClickable(
+                onClick = { onClick?.let { it() } },
+                onLongClick = { onLongClick?.let { it() } }
+            ),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(vertical = 10.dp)
+                    .fillMaxHeight(),
+            ) {
+                Text(text = diary.content ?: "__")
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "${diary.time} ${diary.day}/${diary.month}/${diary.year}",
+                    fontWeight = FontWeight(600),
+                    fontSize = 13.sp
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Image(
+                modifier = Modifier.size(50.dp),
+                painter = painterResource(id = listFeeling[diary.feel]),
+                contentDescription = ""
+            )
         }
     }
 }

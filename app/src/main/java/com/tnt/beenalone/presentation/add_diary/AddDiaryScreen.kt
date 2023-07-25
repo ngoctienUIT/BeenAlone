@@ -54,12 +54,17 @@ import java.util.Locale
 @Composable
 fun AddDiaryScreen(
     navController: NavController,
-    date: LocalDate,
+    id: Long? = null,
+    date: LocalDate? = null,
     viewModel: AddDiaryViewModel = hiltViewModel()
 ) {
     val addDiaryUIState by viewModel.addDiaryUIState.collectAsState()
     val density = LocalDensity.current
     val formatter = DateTimeFormatter.ofPattern("EEEE, dd 'thg' MM yyyy", Locale("vi", "VN"))
+
+    if (id != null) {
+        viewModel.getDiary(id)
+    }
 
     if (viewModel.isSuccess) {
         viewModel.isSuccess = false
@@ -73,17 +78,30 @@ fun AddDiaryScreen(
                 navigationIcon = {
                     Icon(
                         modifier = Modifier
-                            .padding(end = 10.dp)
+                            .padding(horizontal = 10.dp)
                             .size(30.dp)
                             .clickable { navController.popBackStack() },
                         painter = painterResource(id = R.drawable.close_icon),
                         contentDescription = "tnt",
                         tint = Color.Red
                     )
+                },
+                actions = {
+                    if (id != null)
+                        Icon(
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
+                                .size(30.dp)
+                                .clickable { viewModel.deleteDiary(id) },
+                            painter = painterResource(id = R.drawable.trash_icon),
+                            contentDescription = "",
+                            tint = Color.Red
+                        )
                 }
             )
         },
-    ) {
+
+        ) {
         Column(
             modifier = Modifier
                 .padding(top = it.calculateTopPadding() + 16.dp)
@@ -93,7 +111,7 @@ fun AddDiaryScreen(
         ) {
             Text(text = "Xin chào, ${addDiaryUIState.user?.name}!")
             Text(text = "Hôm nay bạn cảm thấy như thể nào?")
-            Text(text = formatter.format(date))
+            Text(text = formatter.format(date ?: viewModel.date))
             Spacer(modifier = Modifier.height(10.dp))
             Card(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -127,10 +145,16 @@ fun AddDiaryScreen(
                     Text(text = "Chi tiết")
                 }
                 Button(
-                    onClick = { viewModel.saveDiary(date) },
+                    onClick = {
+                        if (date != null) {
+                            viewModel.saveDiary(date)
+                        } else {
+                            viewModel.updateDiary(id!!)
+                        }
+                    },
                     enabled = viewModel.selectedFeeling != -1
                 ) {
-                    Text(text = "Lưu")
+                    Text(text = if (id != null) "Cập nhật" else "Lưu")
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -158,6 +182,6 @@ fun AddDiaryScreen(
 @Composable
 fun AddDiaryScreenPreview() {
     BeenAloneTheme {
-        AddDiaryScreen(rememberNavController(), LocalDate.now())
+        AddDiaryScreen(rememberNavController(), null, LocalDate.now())
     }
 }

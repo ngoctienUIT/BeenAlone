@@ -25,10 +25,10 @@ class RankViewModel @Inject constructor(
 
     private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-    init {
-        getRank()
-        getUser()
-    }
+//    init {
+//        getRank()
+//        getUser()
+//    }
 
     private fun getRank() {
         viewModelScope.launch {

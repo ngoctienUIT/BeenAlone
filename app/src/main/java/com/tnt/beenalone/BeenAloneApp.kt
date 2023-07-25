@@ -17,6 +17,7 @@ import com.tnt.beenalone.presentation.main.MainScreen
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
 import com.tnt.beenalone.core.utils.NavDestinations
 import com.tnt.beenalone.presentation.add_diary.AddDiaryScreen
+import com.tnt.beenalone.presentation.diary.DiaryScreen
 import java.time.LocalDate
 
 @Composable
@@ -37,6 +38,9 @@ fun BeenAloneApp() {
                 composable(NavDestinations.EDIT_DISPLAY_SCREEN) {
                     EditDisplayScreen(navController)
                 }
+                composable(NavDestinations.DIARY_SCREEN) {
+                    DiaryScreen(navController)
+                }
                 composable(
                     "${NavDestinations.ADD_DIARY_SCREEN}/{day}/{month}/{year}",
                     arguments = listOf(
@@ -49,7 +53,17 @@ fun BeenAloneApp() {
                     val month = backStackEntry.arguments?.getInt("month")
                     val year = backStackEntry.arguments?.getInt("year")
                     if (day != null && month != null && year != null)
-                        AddDiaryScreen(navController, LocalDate.of(year, month, day))
+                        AddDiaryScreen(navController, date = LocalDate.of(year, month, day))
+                }
+                composable(
+                    "${NavDestinations.ADD_DIARY_SCREEN}/{id}",
+                    arguments = listOf(
+                        navArgument("id") { type = NavType.LongType },
+                    )
+                ) { backStackEntry ->
+                    val id = backStackEntry.arguments?.getLong("id")
+                    if (id != null)
+                        AddDiaryScreen(navController, id)
                 }
             }
         }

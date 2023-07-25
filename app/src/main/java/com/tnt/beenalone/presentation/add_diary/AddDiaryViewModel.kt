@@ -12,6 +12,7 @@ import com.tnt.beenalone.data.local.repository.BeenAloneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -33,6 +34,8 @@ class AddDiaryViewModel @Inject constructor(
 
     var isSuccess by mutableStateOf(false)
 
+    var date: LocalDate by mutableStateOf(LocalDate.now())
+
     init {
         getUser()
     }
@@ -43,6 +46,19 @@ class AddDiaryViewModel @Inject constructor(
                 Log.d("user", it.toString())
                 if (it != null) {
                     _addDiaryUIState.value = AddDiaryUIState(it.toUser())
+                }
+            }
+        }
+    }
+
+    fun getDiary(id: Long) {
+        viewModelScope.launch {
+            beenAloneRepository.getDiary(id).collect {
+                Log.d("diary", it.toString())
+                if (it != null) {
+                    selectedFeeling = it.feel
+                    content = it.content
+                    date = LocalDate.of(it.year, it.month, it.day)
                 }
             }
         }
@@ -67,6 +83,21 @@ class AddDiaryViewModel @Inject constructor(
     }
 
     fun updateDiary(id: Long) {
+        viewModelScope.launch {
+            val diary = beenAloneRepository.getDiary(id).first()
+            if (diary != null) {
+                beenAloneRepository.upsertDiary(
+                    diary.copy(feel = selectedFeeling, content = content)
+                )
+            }
+            isSuccess = true
+        }
+    }
 
+    fun deleteDiary(id: Long) {
+        viewModelScope.launch {
+            beenAloneRepository.deleteDiaryById(id)
+        }
+        isSuccess = true
     }
 }

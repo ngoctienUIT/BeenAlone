@@ -16,6 +16,8 @@ interface BeenAloneRepository {
     //Diary
     fun getDiary(id: Long): Flow<DiaryEntity?>
 
+    fun getAllDiary():Flow<List<DiaryEntity>>
+
     fun getListDiaryByDate(day: Int, month: Int, year: Int): Flow<List<DiaryEntity>>
 
     fun getListDiaryByMonth(month: Int, year: Int): Flow<List<DiaryEntity>>

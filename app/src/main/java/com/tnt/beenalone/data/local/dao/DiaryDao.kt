@@ -12,6 +12,9 @@ interface DiaryDao {
     @Query("SELECT * from Diary WHERE id = :id")
     fun getDiary(id: Long): Flow<DiaryEntity?>
 
+    @Query("SELECT * from Diary ORDER BY id ASC")
+    fun getAllDiary(): Flow<List<DiaryEntity>>
+
     @Query("SELECT * from Diary WHERE day = :day AND month = :month AND year = :year")
     fun getListDiaryByDate(day: Int, month: Int, year: Int): Flow<List<DiaryEntity>>
 

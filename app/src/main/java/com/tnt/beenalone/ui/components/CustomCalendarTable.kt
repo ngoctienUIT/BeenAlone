@@ -42,7 +42,6 @@ fun CustomCalendarTable(
     date: LocalDate,
     localDate: LocalDate = LocalDate.now(),
     listDiary: List<DiaryEntity> = listOf(),
-//    itemContent: @Composable (() -> Unit)? = null,
     onChangeMonth: ((month: LocalDate) -> Unit)? = null,
     onChangeDate: ((date: LocalDate) -> Unit)? = null,
 ) {
@@ -146,8 +145,7 @@ fun CustomCalendarTable(
                                 modifier = Modifier.clickable {
                                     if (isEnable) onChangeDate?.let {
                                         it(LocalDate.of(now.year, now.month, content.toInt()))
-                                    }
-                                    else {
+                                    } else {
                                         now = if (content.toInt() > 15) now.previousMonth()
                                         else now.nextMonth()
                                     }
