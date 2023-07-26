@@ -53,13 +53,12 @@ class AddDiaryViewModel @Inject constructor(
 
     fun getDiary(id: Long) {
         viewModelScope.launch {
-            beenAloneRepository.getDiary(id).collect {
-                Log.d("diary", it.toString())
-                if (it != null) {
-                    selectedFeeling = it.feel
-                    content = it.content
-                    date = LocalDate.of(it.year, it.month, it.day)
-                }
+            val diary = beenAloneRepository.getDiary(id).first()
+            Log.d("diary", diary.toString())
+            if (diary != null) {
+                selectedFeeling = diary.feel
+                content = diary.content
+                date = LocalDate.of(diary.year, diary.month, diary.day)
             }
         }
     }
@@ -96,8 +95,11 @@ class AddDiaryViewModel @Inject constructor(
 
     fun deleteDiary(id: Long) {
         viewModelScope.launch {
-            beenAloneRepository.deleteDiaryById(id)
+            val diary = beenAloneRepository.getDiary(id).first()
+            if (diary != null) {
+                beenAloneRepository.deleteDiary(diary)
+                isSuccess = true
+            }
         }
-        isSuccess = true
     }
 }

@@ -1,5 +1,7 @@
 package com.tnt.beenalone.presentation.setting
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +41,7 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 @Composable
 fun SettingScreen(navController: NavController) {
     val dialogState = rememberMaterialDialogState()
+    val context = LocalContext.current
 
     MaterialDialog(
         dialogState = dialogState,
@@ -102,10 +106,20 @@ fun SettingScreen(navController: NavController) {
 
             }
             ItemSetting(title = "Ghé thăm Fanpage") {
-
+                val urlIntent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://www.facebook.com/SinhVienCode.TNT/")
+                )
+                context.startActivity(urlIntent)
             }
             ItemSetting(title = "Thông tin ứng dụng") {
-
+                navController.navigate(NavDestinations.INFO_SCREEN) {
+                    navController.graph.startDestinationRoute?.let { route ->
+                        popUpTo(route) { saveState = true }
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }
         }
     }

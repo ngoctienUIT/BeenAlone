@@ -18,6 +18,7 @@ import com.tnt.beenalone.ui.theme.BeenAloneTheme
 import com.tnt.beenalone.core.utils.NavDestinations
 import com.tnt.beenalone.presentation.add_diary.AddDiaryScreen
 import com.tnt.beenalone.presentation.diary.DiaryScreen
+import com.tnt.beenalone.presentation.info.InfoScreen
 import java.time.LocalDate
 
 @Composable
@@ -37,6 +38,9 @@ fun BeenAloneApp() {
                 }
                 composable(NavDestinations.EDIT_DISPLAY_SCREEN) {
                     EditDisplayScreen(navController)
+                }
+                composable(NavDestinations.INFO_SCREEN) {
+                    InfoScreen(navController)
                 }
                 composable(NavDestinations.DIARY_SCREEN) {
                     DiaryScreen(navController)
