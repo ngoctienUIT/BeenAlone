@@ -8,8 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.tnt.beenalone.data.local.repository.BeenAloneRepository
 import com.tnt.beenalone.data.local.store.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -21,10 +19,12 @@ class EditDisplayViewModel @Inject constructor(
     private val dataStoreManager: DataStoreManager
 ) :
     ViewModel() {
-    private val _editDisplayUIState = MutableStateFlow(EditDisplayUIState())
-    val editDisplayUIState: StateFlow<EditDisplayUIState> = _editDisplayUIState
+    var title by mutableStateOf("")
+    var datePicker: LocalDate by mutableStateOf(LocalDate.now())
+    var date: LocalDate by mutableStateOf(LocalDate.now())
+    var startDate: LocalDate by mutableStateOf(LocalDate.now())
 
-    private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
     var showToastSuccess by mutableStateOf(false)
 
@@ -36,14 +36,14 @@ class EditDisplayViewModel @Inject constructor(
     private fun getSetting() {
         viewModelScope.launch {
             dataStoreManager.getString("dateAlone").collect { dateAlone ->
-                _editDisplayUIState.value =
-                    _editDisplayUIState.value.copy(date = LocalDate.parse(dateAlone, formatter))
+                date = LocalDate.parse(dateAlone, formatter)
+                datePicker = LocalDate.parse(dateAlone, formatter)
             }
         }
         viewModelScope.launch {
-            dataStoreManager.getString("title").collect { title ->
-                if (title != null) {
-                    _editDisplayUIState.value = _editDisplayUIState.value.copy(title = title)
+            dataStoreManager.getString("title").collect { myTitle ->
+                if (myTitle != null) {
+                    title = myTitle
                 }
             }
         }
@@ -53,10 +53,7 @@ class EditDisplayViewModel @Inject constructor(
         viewModelScope.launch {
             beenAloneRepository.getUser().collect {
                 if (it != null) {
-                    _editDisplayUIState.value =
-                        _editDisplayUIState.value.copy(
-                            startDate = LocalDate.parse(it.birthday, formatter)
-                        )
+                    startDate = LocalDate.parse(it.birthday, formatter)
                 }
             }
         }

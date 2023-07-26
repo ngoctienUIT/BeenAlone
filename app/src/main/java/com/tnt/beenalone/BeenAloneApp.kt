@@ -19,6 +19,8 @@ import com.tnt.beenalone.core.utils.NavDestinations
 import com.tnt.beenalone.presentation.add_diary.AddDiaryScreen
 import com.tnt.beenalone.presentation.diary.DiaryScreen
 import com.tnt.beenalone.presentation.info.InfoScreen
+import com.tnt.beenalone.presentation.splash.SplashScreen
+import com.tnt.beenalone.presentation.welcome.WelcomeScreen
 import java.time.LocalDate
 
 @Composable
@@ -30,6 +32,12 @@ fun BeenAloneApp() {
         ) {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = NavDestinations.HOME_SCREEN) {
+                composable(NavDestinations.SPLASH_SCREEN) {
+                    SplashScreen(navController)
+                }
+                composable(NavDestinations.WELCOME_SCREEN) {
+                    WelcomeScreen(navController)
+                }
                 composable(NavDestinations.HOME_SCREEN) {
                     MainScreen(navController)
                 }
