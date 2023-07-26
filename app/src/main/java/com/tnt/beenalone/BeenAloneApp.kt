@@ -31,7 +31,10 @@ fun BeenAloneApp() {
             color = MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = NavDestinations.WELCOME_SCREEN) {
+            NavHost(
+                navController = navController,
+                startDestination = NavDestinations.SPLASH_SCREEN
+            ) {
                 composable(NavDestinations.SPLASH_SCREEN) {
                     SplashScreen(navController)
                 }
