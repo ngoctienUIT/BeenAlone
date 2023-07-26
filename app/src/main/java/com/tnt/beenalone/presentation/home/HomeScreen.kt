@@ -20,16 +20,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,23 +39,11 @@ import com.tnt.beenalone.core.rankList
 import com.tnt.beenalone.ui.components.CustomCircularProgressbar
 import com.tnt.beenalone.ui.components.CustomLinearProgressIndicator
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
-    var days = 0L
-    var title by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    val homeUIState by viewModel.homeUIState.collectAsState()
-
-    LaunchedEffect(homeUIState) {
-        days = ChronoUnit.DAYS.between(homeUIState.date, LocalDate.now())
-        title = homeUIState.title ?: ""
-        name = if (homeUIState.user != null) homeUIState.user!!.name else ""
-    }
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -91,7 +74,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CustomCircularProgressbar(title, dateAlone = days.toFloat())
+            CustomCircularProgressbar(viewModel.title, dateAlone = viewModel.days.toFloat())
             Spacer(modifier = Modifier.height(50.dp))
             Card(
                 modifier = Modifier
@@ -114,18 +97,35 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                 painter = painterResource(id = R.drawable.crown_icon),
                                 contentDescription = "rank"
                             )
-                            Image(
-                                modifier = Modifier
-                                    .size(90.dp)
-                                    .clip(RoundedCornerShape(90.dp))
-                                    .border(
-                                        width = 5.dp,
-                                        shape = RoundedCornerShape(90),
-                                        color = rankList[days.toRankIndex()]["color"] as Color
-                                    ),
-                                painter = painterResource(id = R.drawable.avatar),
-                                contentDescription = "avatar"
-                            )
+                            if (viewModel.imageUri == null) {
+                                Image(
+                                    modifier = Modifier
+                                        .size(90.dp)
+                                        .clip(RoundedCornerShape(90.dp))
+                                        .border(
+                                            width = 5.dp,
+                                            shape = RoundedCornerShape(90),
+                                            color = rankList[viewModel.days.toRankIndex()]["color"] as Color
+                                        ),
+                                    painter = painterResource(id = R.drawable.avatar),
+                                    contentDescription = "avatar",
+                                    contentScale = ContentScale.Crop
+                                )
+                            } else {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .size(90.dp)
+                                        .clip(RoundedCornerShape(90.dp))
+                                        .border(
+                                            width = 5.dp,
+                                            shape = RoundedCornerShape(90),
+                                            color = rankList[viewModel.days.toRankIndex()]["color"] as Color
+                                        ),
+                                    model = viewModel.imageUri,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
                         Column(
                             modifier = Modifier.weight(1f),
@@ -133,7 +133,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = name,
+                                text = viewModel.name,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -146,27 +146,27 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             Image(
                                 modifier = Modifier.size(60.dp),
                                 painter = painterResource(
-                                    id = rankList[days.toRankIndex()]["image"] as Int
+                                    id = rankList[viewModel.days.toRankIndex()]["image"] as Int
                                 ),
                                 contentDescription = "rank"
                             )
                             Spacer(modifier = Modifier.height(5.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "${rankList[days.toRankIndex()]["name"]}",
+                                    text = "${rankList[viewModel.days.toRankIndex()]["name"]}",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = rankList[days.toRankIndex()]["color"] as Color
+                                    color = rankList[viewModel.days.toRankIndex()]["color"] as Color
                                 )
-                                if (days.toNumberStar() > 0)
+                                if (viewModel.days.toNumberStar() > 0)
                                     Text(
                                         modifier = Modifier.padding(start = 3.dp),
-                                        text = days.toNumberStar().toString(),
+                                        text = viewModel.days.toNumberStar().toString(),
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = rankList[days.toRankIndex()]["color"] as Color
+                                        color = rankList[viewModel.days.toRankIndex()]["color"] as Color
                                     )
-                                if (days.toNumberStar() > 0)
+                                if (viewModel.days.toNumberStar() > 0)
                                     Image(
                                         painter = painterResource(id = R.drawable.star_icon),
                                         contentDescription = "star"
@@ -175,7 +175,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                         }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
-                    CustomLinearProgressIndicator(dateAlone = days.toFloat())
+                    CustomLinearProgressIndicator(dateAlone = viewModel.days.toFloat())
                 }
             }
         }

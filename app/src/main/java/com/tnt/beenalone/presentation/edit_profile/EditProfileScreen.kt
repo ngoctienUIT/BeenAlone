@@ -1,5 +1,9 @@
 package com.tnt.beenalone.presentation.edit_profile
 
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,16 +24,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.tnt.beenalone.R
-import com.tnt.beenalone.models.User
 import com.tnt.beenalone.ui.components.CustomAppBar
 import com.tnt.beenalone.ui.components.toast.CustomToastUtil
 import com.tnt.beenalone.ui.theme.BeenAloneTheme
@@ -54,22 +54,15 @@ fun EditProfileScreen(
     navController: NavController,
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
-    var name by remember { mutableStateOf("") }
-    var gender by remember { mutableStateOf(true) }
     val dialogState = rememberMaterialDialogState()
-    var datePicker by remember { mutableStateOf(LocalDate.now()) }
-    var date by remember { mutableStateOf(LocalDate.now()) }
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    val editProfileUIState by viewModel.editProfileUIState.collectAsState()
 
-    LaunchedEffect(editProfileUIState) {
-        if (editProfileUIState.user != null) {
-            name = editProfileUIState.user!!.name
-            datePicker = LocalDate.parse(editProfileUIState.user!!.birthday, formatter)
-            date = LocalDate.parse(editProfileUIState.user!!.birthday, formatter)
-            gender = editProfileUIState.user!!.gender
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            viewModel.imageUri = uri
+            Log.d("uri", uri.toString())
+            Log.d("path", uri?.path.toString())
         }
-    }
 
     if (viewModel.showToastSuccess) {
         CustomToastUtil.ToastSuccess("Lưu thành công")
@@ -80,32 +73,24 @@ fun EditProfileScreen(
         dialogState = dialogState,
         buttons = {
             positiveButton("Ok") {
-                datePicker = date
+                viewModel.datePicker = viewModel.date
             }
             negativeButton("Cancel") {
-                date = datePicker
+                viewModel.date = viewModel.datePicker
             }
         }
     ) {
         datepicker(
             title = "Ngày sinh",
-            initialDate = datePicker,
+            initialDate = viewModel.datePicker,
             allowedDateValidator = { it <= LocalDate.now() && it >= LocalDate.of(1990, 1, 1) }
-        ) { date = it }
+        ) { viewModel.date = it }
     }
 
     Scaffold(
         topBar = {
             CustomAppBar(title = "Chỉnh sửa thông tin", navController = navController) {
-                viewModel.saveProfile(
-                    User(
-                        name,
-                        true,
-                        formatter.format(datePicker),
-                        "",
-                        LocalDate.now()
-                    )
-                )
+                viewModel.saveProfile()
             }
         }
     ) {
@@ -116,14 +101,27 @@ fun EditProfileScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(modifier = Modifier.size(150.dp)) {
-                Image(
-                    modifier = Modifier
-                        .size(150.dp)
-                        .clip(RoundedCornerShape(90.dp))
-                        .clickable { },
-                    painter = painterResource(id = R.drawable.avatar),
-                    contentDescription = ""
-                )
+                if (viewModel.imageUri == null) {
+                    Image(
+                        modifier = Modifier
+                            .size(150.dp)
+                            .clip(RoundedCornerShape(90.dp))
+                            .clickable { launcher.launch("image/*") },
+                        painter = painterResource(id = R.drawable.avatar),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(150.dp)
+                            .clip(RoundedCornerShape(90.dp))
+                            .clickable { launcher.launch("image/*") },
+                        model = viewModel.imageUri,
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop
+                    )
+                }
                 Icon(
                     modifier = Modifier
                         .size(35.dp)
@@ -134,9 +132,9 @@ fun EditProfileScreen(
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
-            ItemEditText("Tên", name, { text -> name = text })
+            ItemEditText("Tên", viewModel.name, { text -> viewModel.name = text })
             Spacer(modifier = Modifier.height(10.dp))
-            ItemEditText("Ngày sinh", formatter.format(datePicker), {}) {
+            ItemEditText("Ngày sinh", formatter.format(viewModel.datePicker), {}) {
                 dialogState.show()
             }
             Spacer(modifier = Modifier.height(10.dp))
