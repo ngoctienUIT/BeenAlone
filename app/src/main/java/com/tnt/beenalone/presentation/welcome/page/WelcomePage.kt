@@ -21,8 +21,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tnt.beenalone.R
-import com.tnt.beenalone.models.User
-import java.time.LocalDate
 
 @Composable
 fun WelcomePage(onNext: () -> Unit) {
@@ -31,6 +29,7 @@ fun WelcomePage(onNext: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.weight(1f))
         Image(
             modifier = Modifier.fillMaxWidth(0.5f),
             painter = painterResource(id = R.drawable.heart_icon),

@@ -35,7 +35,7 @@ fun CustomCircularProgressbar(
 
     val dateAloneAnimate = animateFloatAsState(
         targetValue = dateAloneRemember,
-        animationSpec = tween(durationMillis = animationDuration)
+        animationSpec = tween(durationMillis = animationDuration), label = ""
     )
 
     LaunchedEffect(dateAlone) { dateAloneRemember = dateAlone % 100 }

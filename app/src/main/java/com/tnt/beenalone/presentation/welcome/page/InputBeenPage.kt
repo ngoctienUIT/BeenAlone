@@ -28,9 +28,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun InputBeenPage(birthDate: LocalDate, onNext: (title: String, date: LocalDate) -> Unit) {
+fun InputBeenPage(birthDate: LocalDate, onNext: (date: LocalDate) -> Unit) {
     val dialogState = rememberMaterialDialogState()
-    var title by remember { mutableStateOf("") }
     var datePicker: LocalDate by remember { mutableStateOf(LocalDate.now()) }
     var date: LocalDate by remember { mutableStateOf(LocalDate.now()) }
     val startDate: LocalDate by remember { mutableStateOf(birthDate) }
@@ -55,8 +54,7 @@ fun InputBeenPage(birthDate: LocalDate, onNext: (title: String, date: LocalDate)
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        ItemEditText("Tiêu đề", title, { text -> title = text })
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.weight(1f))
         ItemEditText("Ngày bắt đầu cô đơn", formatter.format(datePicker), {}) {
             dialogState.show()
         }
@@ -66,12 +64,12 @@ fun InputBeenPage(birthDate: LocalDate, onNext: (title: String, date: LocalDate)
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(horizontal = 16.dp),
-            onClick = { onNext(title, datePicker) },
+            onClick = { onNext(datePicker) },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             shape = RoundedCornerShape(8.dp),
         ) {
             Text(
-                text = "Tiếp",
+                text = "Hoàn tất",
                 fontSize = 16.sp,
                 fontWeight = FontWeight(600),
             )

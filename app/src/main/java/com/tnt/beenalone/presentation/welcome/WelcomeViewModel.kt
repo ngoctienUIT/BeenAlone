@@ -30,12 +30,12 @@ class WelcomeViewModel @Inject constructor(
         }
     }
 
-    fun saveSetting(dateAlone: LocalDate, title: String) {
+    fun saveSetting(dateAlone: LocalDate) {
         viewModelScope.launch {
             dataStoreManager.setString("dateAlone", formatter.format(dateAlone))
         }
         viewModelScope.launch {
-            dataStoreManager.setString("title", title)
+            dataStoreManager.setString("title", "Been Alone")
         }
     }
 }

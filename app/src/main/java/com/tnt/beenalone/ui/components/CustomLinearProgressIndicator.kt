@@ -45,7 +45,7 @@ fun CustomLinearProgressIndicator(
 
     val dateAloneAnimate by animateFloatAsState(
         targetValue = dateAloneRemember,
-        animationSpec = tween(durationMillis = animationDuration)
+        animationSpec = tween(durationMillis = animationDuration), label = ""
     )
 
     var boxSize by remember { mutableStateOf(Size.Zero) }
